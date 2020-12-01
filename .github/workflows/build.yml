@@ -1,0 +1,44 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+          fi
+          go get golang.org/x/lint/golint
+
+      - name: Test
+        run: go test -v -parallel 4 -coverprofile=profile.cov ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Lint
+        run: golint ./...
+      
+      - uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
