@@ -60,6 +60,9 @@ func (p *inverter) ReadPower() (float32, error) {
 	if err != nil {
 		return 0, err
 	}
+	if pow >= math.MaxUint16 {
+		return float32(0), nil
+	}
 
 	return float32(pow), nil
 }

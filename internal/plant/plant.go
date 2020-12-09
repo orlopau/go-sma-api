@@ -156,6 +156,10 @@ func (p *Plant) FetchSummary() (Summary, error) {
 
 	// fetch battery soc
 	g.Go(func() error {
+		if p.Bat == nil {
+			return nil
+		}
+
 		soc, err := p.Bat.ReadSoC()
 		if err != nil {
 			return err
