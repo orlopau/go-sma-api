@@ -9,20 +9,16 @@ import (
 
 func (s *server) handlePlantSummary() http.HandlerFunc {
 	type plant struct {
-		Name      string  `json:"name"`
-		Grid      float32 `json:"grid"`
-		PV        float32 `json:"pv"`
-		Bat       float32 `json:"battery"`
-		BatSoC    uint    `json:"batterySoC"`
-		Timestamp int64   `json:"timestamp"`
-	}
-
-	type response struct {
-		Plants []plant `json:"plants"`
+		Grid            float32 `json:"grid"`
+		PV              float32 `json:"pv"`
+		Bat             float32 `json:"battery"`
+		SelfConsumption float32 `json:"selfConsumption"`
+		BatSoC          uint    `json:"batterySoC"`
+		Timestamp       int64   `json:"timestamp"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		var plants []plant
+		plants := make(map[string]plant, len(s.plants))
 
 		for k, v := range s.plants {
 			summary, err := v.FetchSummary()
@@ -31,17 +27,17 @@ func (s *server) handlePlantSummary() http.HandlerFunc {
 				return
 			}
 
-			plants = append(plants, plant{
-				Name:      k,
-				Grid:      summary.Grid,
-				PV:        summary.PV,
-				Bat:       summary.Bat,
-				BatSoC:    summary.BatPercentage,
-				Timestamp: summary.Timestamp.Unix(),
-			})
+			plants[k] = plant{
+				Grid:            summary.Grid,
+				PV:              summary.PV,
+				Bat:             summary.Bat,
+				SelfConsumption: summary.SelfConsumption,
+				BatSoC:          summary.BatPercentage,
+				Timestamp:       summary.Timestamp.Unix(),
+			}
 		}
 
-		writeJSON(w, response{Plants: plants})
+		writeJSON(w, plants)
 	}
 }
 
