@@ -33,11 +33,11 @@ type ContinuousFetchPlant struct {
 }
 
 type Summary struct {
-	Grid            float32
-	PV, Bat         float32
-	SelfConsumption float32
-	BatPercentage   uint
-	Timestamp       time.Time
+	Grid                         float32
+	PV, Bat                      float32
+	SelfConsumption              float32
+	BatPercentage                uint
+	TimestampStart, TimestampEnd time.Time
 }
 
 func NewPlant(em gridReader, readers ...PointReader) (*Plant, error) {
@@ -124,6 +124,7 @@ func (p *Plant) FetchSummary() (Summary, error) {
 		return Summary{}, err
 	}
 	summary.Grid = grid
+	summary.TimestampStart = time.Now()
 
 	// fetch SunSpec data
 	var g errgroup.Group
@@ -177,7 +178,7 @@ func (p *Plant) FetchSummary() (Summary, error) {
 	}
 
 	summary.SelfConsumption = summary.PV + summary.Bat + summary.Grid
-	summary.Timestamp = time.Now()
+	summary.TimestampEnd = time.Now()
 
 	return summary, nil
 }

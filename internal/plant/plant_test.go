@@ -250,7 +250,9 @@ func TestNewPlant(t *testing.T) {
 }
 
 func equalSummaryButTime(s1, s2 Summary) bool {
-	s1.Timestamp = time.Time{}
-	s2.Timestamp = time.Time{}
+	s1.TimestampStart = time.Time{}
+	s1.TimestampEnd = time.Time{}
+	s2.TimestampStart = time.Time{}
+	s2.TimestampEnd = time.Time{}
 	return s1 == s2
 }

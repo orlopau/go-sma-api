@@ -14,7 +14,8 @@ func (s *server) handlePlantSummary() http.HandlerFunc {
 		Bat             float32 `json:"battery"`
 		SelfConsumption float32 `json:"selfConsumption"`
 		BatSoC          uint    `json:"batterySoC"`
-		Timestamp       int64   `json:"timestamp"`
+		TimestampStart  int64   `json:"timestampStart"`
+		TimestampEnd    int64   `json:"timestampEnd"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +34,8 @@ func (s *server) handlePlantSummary() http.HandlerFunc {
 				Bat:             summary.Bat,
 				SelfConsumption: summary.SelfConsumption,
 				BatSoC:          summary.BatPercentage,
-				Timestamp:       summary.Timestamp.Unix(),
+				TimestampStart:  summary.TimestampStart.Unix(),
+				TimestampEnd:    summary.TimestampEnd.Unix(),
 			}
 		}
 
