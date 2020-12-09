@@ -5,6 +5,7 @@ import (
 	"github.com/orlopau/go-energy/pkg/sunspec"
 	"go.uber.org/goleak"
 	"testing"
+	"time"
 )
 
 type dummyBatteryPowerReader struct {
@@ -134,7 +135,7 @@ func TestPlant_FetchSummary(t *testing.T) {
 		BatPercentage:   60,
 	}
 
-	if summary != expected {
+	if !equalSummaryButTime(expected, summary) {
 		t.Fatalf("expected %v got %v", expected, summary)
 	}
 }
@@ -241,9 +242,15 @@ func TestNewPlant(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if tt.exSummary != summary {
+			if !equalSummaryButTime(tt.exSummary, summary) {
 				t.Fatalf("expected %v, got %v", tt.exSummary, summary)
 			}
 		})
 	}
+}
+
+func equalSummaryButTime(s1, s2 Summary) bool {
+	s1.Timestamp = time.Time{}
+	s2.Timestamp = time.Time{}
+	return s1 == s2
 }
