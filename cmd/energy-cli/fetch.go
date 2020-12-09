@@ -5,12 +5,19 @@ import (
 	"github.com/gosuri/uilive"
 	"github.com/olekukonko/tablewriter"
 	"github.com/orlopau/go-energy/pkg/sunspec"
-	"github.com/orlopau/go-sma-api/internal/plant"
+	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
+	"sync"
 	"time"
 )
 
-func AddressFetch(slaveId byte, addrs []string) error {
-	devices := make([]*sunspec.Device, len(addrs))
+type DeviceInfo struct {
+	Power float64
+	Soc   uint
+}
+
+func addressFetch(slaveId byte, addrs []string) error {
+	devices := make([]*sunspec.ModelReader, len(addrs))
 
 	for i, v := range addrs {
 		d, err := sunspec.Connect(slaveId, v)
@@ -28,7 +35,7 @@ func AddressFetch(slaveId byte, addrs []string) error {
 	table.SetHeader([]string{"Address", "Power", "SoC"})
 
 	for {
-		infos, err := plant.GetInfos(devices...)
+		infos, err := getInfos(devices...)
 		if err != nil {
 			return err
 		}
@@ -47,4 +54,58 @@ func AddressFetch(slaveId byte, addrs []string) error {
 
 		<-time.After(time.Second * 10)
 	}
+}
+
+func getInfo(device *sunspec.ModelReader) (DeviceInfo, error) {
+	var info DeviceInfo
+
+	pow, err := device.GetAnyPoint(sunspec.PointPower1Phase, sunspec.PointPower2Phase, sunspec.PointPower3Phase)
+	if err != nil {
+		return DeviceInfo{}, err
+	}
+
+	info.Power = pow
+
+	soc, err := device.GetAnyPoint(sunspec.PointSoc)
+	if errors.Is(err, sunspec.ErrNotImplemented) {
+		return info, nil
+	}
+	if err != nil {
+		return DeviceInfo{}, err
+	}
+
+	info.Soc = uint(soc)
+
+	return info, nil
+}
+
+func getInfos(devices ...*sunspec.ModelReader) ([]DeviceInfo, error) {
+	var group errgroup.Group
+
+	infos := make([]DeviceInfo, len(devices))
+	var m sync.Mutex
+
+	for i, v := range devices {
+		index := i
+		device := v
+		group.Go(func() error {
+			info, err := getInfo(device)
+			if err != nil {
+				return err
+			}
+
+			m.Lock()
+			infos[index] = info
+			m.Unlock()
+
+			return nil
+		})
+	}
+
+	err := group.Wait()
+	if err != nil {
+		return nil, err
+	}
+
+	return infos, nil
 }

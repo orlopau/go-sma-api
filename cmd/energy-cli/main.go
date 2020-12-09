@@ -44,7 +44,7 @@ func main() {
 						return toExitCode(discoveryFetch(byte(slaveId)))
 					}
 
-					return toExitCode(AddressFetch(byte(slaveId), addrs))
+					return toExitCode(addressFetch(byte(slaveId), addrs))
 				},
 			},
 		},
