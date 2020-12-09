@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	keyConfigPath = "configPath"
-	keyConfigPort = "port"
-	slaveId byte = 126
+	keyConfigPath      = "config_path"
+	keyConfigPort      = "port"
+	slaveId       byte = 126
 )
 
 func main() {
