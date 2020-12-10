@@ -1,9 +1,11 @@
 package api
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/gorilla/handlers"
+)
 
 func (s *server) routes() {
-	s.router.Use(mux.CORSMethodMiddleware(s.router))
+	s.router.Use(handlers.CORS())
 
 	r := s.router.PathPrefix("/v1")
 	r.HandlerFunc(s.handlePlantSummary()).Path("/summary")
