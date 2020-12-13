@@ -3,6 +3,8 @@ package plant
 import (
 	"context"
 	"fmt"
+	"github.com/orlopau/go-energy/pkg/sunspec"
+	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 	"sync"
 	"time"
@@ -84,7 +86,7 @@ func fetchSum(readers ...powerReader) (float32, error) {
 	for _, v := range readers {
 		go func(reader powerReader) {
 			power, err := reader.ReadPower()
-			if err != nil {
+			if err != nil && !errors.Is(err, sunspec.ErrPointNotImplemented) {
 				select {
 				case errc <- err:
 				case <-quitc:

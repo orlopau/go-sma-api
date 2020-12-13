@@ -152,7 +152,7 @@ func (d *dummyPointReader) GetAnyPoint(ps ...sunspec.Point) (float64, error) {
 		}
 	}
 
-	return 0, sunspec.ErrNotImplemented
+	return 0, sunspec.ErrPointNotImplemented
 }
 
 func (d *dummyPointReader) HasAnyPoint(ps ...sunspec.Point) (bool, sunspec.Point, error) {

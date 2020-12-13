@@ -15,4 +15,4 @@ require (
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 )
 
-// replace github.com/orlopau/go-energy => /home/paul/dev/go-energy
+replace github.com/orlopau/go-energy => /home/paul/dev/go-energy

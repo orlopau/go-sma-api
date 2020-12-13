@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/orlopau/go-sma-api/internal/fetch"
 	"github.com/urfave/cli/v2"
 	"os"
 )
@@ -44,7 +45,7 @@ func main() {
 						return toExitCode(discoveryFetch(byte(slaveId)))
 					}
 
-					return toExitCode(addressFetch(byte(slaveId), addrs))
+					return toExitCode(fetch.AddressFetch(byte(slaveId), addrs))
 				},
 			},
 		},

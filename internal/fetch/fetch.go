@@ -1,4 +1,4 @@
-package main
+package fetch
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type DeviceInfo struct {
 	Soc   uint
 }
 
-func addressFetch(slaveId byte, addrs []string) error {
+func AddressFetch(slaveId byte, addrs []string) error {
 	devices := make([]*sunspec.ModelReader, len(addrs))
 
 	for i, v := range addrs {
@@ -67,7 +67,7 @@ func getInfo(device *sunspec.ModelReader) (DeviceInfo, error) {
 	info.Power = pow
 
 	soc, err := device.GetAnyPoint(sunspec.PointSoc)
-	if errors.Is(err, sunspec.ErrNotImplemented) {
+	if errors.Is(err, sunspec.ErrPointNotImplemented) {
 		return info, nil
 	}
 	if err != nil {
