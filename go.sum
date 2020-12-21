@@ -148,6 +148,8 @@ github.com/orlopau/go-energy v0.0.0-20201209221649-ed6df8d964bc h1:SUuNHdeqIp9tP
 github.com/orlopau/go-energy v0.0.0-20201209221649-ed6df8d964bc/go.mod h1:peaedg+ReKyacqIHs3NIv/FfqPAbZh4dw7ZpLIjzc3w=
 github.com/orlopau/go-energy v0.0.0-20201217174258-c6d50d1a920e h1:WsSSYc8iuw9yhfT9627iw6TPXmT5e0Wpz/bpMwoRiME=
 github.com/orlopau/go-energy v0.0.0-20201217174258-c6d50d1a920e/go.mod h1:/hv1FOfRVTgfpUwsz2SGQ0LzSPjDoL9NKu/kAuEPKRI=
+github.com/orlopau/go-energy v0.0.0-20201221163030-622698c70aeb h1:KWw/0Rg0uYAukhNPQGMGXPykxsryG5bXt/cRRF23qBw=
+github.com/orlopau/go-energy v0.0.0-20201221163030-622698c70aeb/go.mod h1:/hv1FOfRVTgfpUwsz2SGQ0LzSPjDoL9NKu/kAuEPKRI=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181zc=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
