@@ -17,10 +17,19 @@ type DeviceInfo struct {
 }
 
 func AddressFetch(slaveId byte, addrs []string) error {
-	devices := make([]*sunspec.ModelReader, len(addrs))
+	devices := make([]*sunspec.ModbusDevice, len(addrs))
 
 	for i, v := range addrs {
-		d, err := sunspec.Connect(slaveId, v)
+		d, err := sunspec.Connect(v)
+		if slaveId != 0 {
+			d.SetDeviceAddress(slaveId)
+		} else {
+			err := d.AutoSetDeviceAddress()
+			if err != nil {
+				return errors.Wrap(err, "setting up device")
+			}
+		}
+
 		if err != nil {
 			return err
 		}
@@ -56,10 +65,13 @@ func AddressFetch(slaveId byte, addrs []string) error {
 	}
 }
 
-func getInfo(device *sunspec.ModelReader) (DeviceInfo, error) {
+func getInfo(device *sunspec.ModbusDevice) (DeviceInfo, error) {
 	var info DeviceInfo
 
 	pow, err := device.GetAnyPoint(sunspec.PointPower1Phase, sunspec.PointPower2Phase, sunspec.PointPower3Phase)
+	if errors.Is(err, sunspec.ErrPointNotImplemented) {
+		return DeviceInfo{}, nil
+	}
 	if err != nil {
 		return DeviceInfo{}, err
 	}
@@ -79,7 +91,7 @@ func getInfo(device *sunspec.ModelReader) (DeviceInfo, error) {
 	return info, nil
 }
 
-func getInfos(devices ...*sunspec.ModelReader) ([]DeviceInfo, error) {
+func getInfos(devices ...*sunspec.ModbusDevice) ([]DeviceInfo, error) {
 	var group errgroup.Group
 
 	infos := make([]DeviceInfo, len(devices))

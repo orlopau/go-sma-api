@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/orlopau/go-energy/pkg/meter"
 	"github.com/orlopau/go-energy/pkg/sunspec"
+	"github.com/pkg/errors"
 	"math"
 )
 
@@ -57,6 +58,11 @@ func (g *GridMeter) ReadGrid() (float32, error) {
 
 func (p *inverter) ReadPower() (float32, error) {
 	pow, err := p.mr.GetAnyPoint(sunspec.PointPower1Phase, sunspec.PointPower2Phase, sunspec.PointPower3Phase)
+	if errors.Is(err, sunspec.ErrPointNotImplemented) {
+		// can be "not implemented" at night
+		return 0, nil
+	}
+
 	if err != nil {
 		return 0, err
 	}

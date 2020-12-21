@@ -73,10 +73,11 @@ func createPlants(modbusSlaveId byte, plants map[string]config.Plant) (map[strin
 	for k, v := range plants {
 		readers := make([]plant.PointReader, len(v.SunSpecAddrs))
 		for i, addr := range v.SunSpecAddrs {
-			ssr, err := sunspec.Connect(modbusSlaveId, addr)
+			ssr, err := sunspec.Connect(addr)
 			if err != nil {
 				return nil, err
 			}
+			ssr.SetDeviceAddress(modbusSlaveId)
 			readers[i] = ssr
 		}
 

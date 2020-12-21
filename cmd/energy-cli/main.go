@@ -25,13 +25,11 @@ func main() {
 						Name:     "slaveId",
 						Aliases:  []string{"id"},
 						Usage:    "slave id to use for modbus connection",
-						Required: true,
 					},
 					&cli.StringSliceFlag{
 						Name:     "addrs",
 						Aliases:  []string{"a"},
 						Usage:    "addresses of devices",
-						Required: false,
 					},
 				},
 				Action: func(context *cli.Context) error {
