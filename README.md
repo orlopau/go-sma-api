@@ -1,6 +1,5 @@
 # GoEnergy-API
 
----
 ![build](https://github.com/orlopau/go-sma-api/workflows/build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/orlopau/go-sma-api/badge.svg?branch=master)](https://coveralls.io/github/orlopau/go-sma-api?branch=master)
 
@@ -8,8 +7,6 @@ GoSMAApi provides tooling for interacting with plants of SMA devices. Included a
 providing an API for interacting with SunSpec compatible plants.
 
 ## Table of Contents
-
----
 
 * [Energy-CLI](#energy-cli)
     + [Fetch](#fetch)
@@ -20,7 +17,6 @@ providing an API for interacting with SunSpec compatible plants.
 
 ## Energy-CLI
 
----
 The application provides a simple command-line application for retrieving data from a plant using SunSpec compatible
 devices.
 
@@ -78,7 +74,6 @@ If everything is successful, the output resembles something similar to this:
 
 ## Energy-API
 
----
 The server provides access to aggregated data of a plant via an HTTP API. A configuration file describing the plant and
 its devices is required.
 
