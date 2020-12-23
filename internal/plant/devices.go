@@ -71,14 +71,12 @@ func (p *inverter) ReadPower() (float32, error) {
 	}
 
 	pow, err := p.mr.GetAnyPoint(sunspec.PointPower1Phase, sunspec.PointPower2Phase, sunspec.PointPower3Phase)
-	if errors.Is(err, sunspec.ErrPointNotImplemented) {
-		// can be "not implemented" at night
-		return 0, nil
-	}
 
-	if err != nil {
+	// can be "not implemented" at night
+	if err != nil && !errors.Is(err, sunspec.ErrPointNotImplemented) {
 		return 0, err
 	}
+
 
 	p.lastPower = float32(math.Max(0, pow))
 	p.lastPowerTime = time.Now()
@@ -92,7 +90,7 @@ func (b *batteryInverter) ReadSoC() (uint, error) {
 
 	soc, err := b.mr.GetAnyPoint(sunspec.PointSoc)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "reading soc")
 	}
 
 	b.lastSoc = uint(soc)
@@ -111,14 +109,13 @@ func getDeviceType(r PointReader) (int, error) {
 		return 0, err
 	}
 
-	// even inverters may implement the model, but the value is always max uint16
+	// even inverters may implement the model, but the value is always not implemented
 	if hasSoC {
-		val, err := r.GetAnyPoint(sunspec.PointSoc)
-		if err != nil {
-			return 0, err
-		}
-		if val >= math.MaxUint16 {
+		_, err := r.GetAnyPoint(sunspec.PointSoc)
+		if errors.Is(err, sunspec.ErrPointNotImplemented) {
 			hasSoC = false
+		} else if err != nil {
+			return 0, err
 		}
 	}
 
