@@ -6,6 +6,7 @@ import (
 	"github.com/orlopau/go-energy/pkg/sunspec"
 	"github.com/pkg/errors"
 	"math"
+	"time"
 )
 
 var activePowerObis = meter.OBISIdentifier{
@@ -15,7 +16,11 @@ var activePowerObis = meter.OBISIdentifier{
 	Tariff:   0,
 }
 
-const wattsResolution = 0.1
+const (
+	wattsResolution = 0.1
+	// refreshTime is the time after which new values are fetched from SunSpec devices.
+	refreshTime     = 5 * time.Second
+)
 
 const (
 	devicePVInverter = iota
@@ -33,11 +38,15 @@ type GridMeter struct {
 }
 
 type inverter struct {
-	mr PointReader
+	mr            PointReader
+	lastPower     float32
+	lastPowerTime time.Time
 }
 
 type batteryInverter struct {
 	inverter
+	lastSoc     uint
+	lastSocTime time.Time
 }
 
 func (g *GridMeter) ReadGrid() (float32, error) {
@@ -57,6 +66,10 @@ func (g *GridMeter) ReadGrid() (float32, error) {
 }
 
 func (p *inverter) ReadPower() (float32, error) {
+	if time.Now().Sub(p.lastPowerTime).Milliseconds() <= refreshTime.Milliseconds() {
+		return p.lastPower, nil
+	}
+
 	pow, err := p.mr.GetAnyPoint(sunspec.PointPower1Phase, sunspec.PointPower2Phase, sunspec.PointPower3Phase)
 	if errors.Is(err, sunspec.ErrPointNotImplemented) {
 		// can be "not implemented" at night
@@ -67,16 +80,24 @@ func (p *inverter) ReadPower() (float32, error) {
 		return 0, err
 	}
 
-	return float32(math.Max(0, pow)), nil
+	p.lastPower = float32(math.Max(0, pow))
+	p.lastPowerTime = time.Now()
+	return p.lastPower, nil
 }
 
 func (b *batteryInverter) ReadSoC() (uint, error) {
+	if time.Now().Sub(b.lastPowerTime).Milliseconds() <= refreshTime.Milliseconds() {
+		return b.lastSoc, nil
+	}
+
 	soc, err := b.mr.GetAnyPoint(sunspec.PointSoc)
 	if err != nil {
 		return 0, err
 	}
 
-	return uint(soc), nil
+	b.lastSoc = uint(soc)
+	b.lastSocTime = time.Now()
+	return b.lastSoc, nil
 }
 
 func getDeviceType(r PointReader) (int, error) {

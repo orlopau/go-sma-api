@@ -59,9 +59,9 @@ func NewPlant(em gridReader, readers ...PointReader) (*Plant, error) {
 			if bat != nil {
 				return nil, fmt.Errorf("multiple battery inverters in plant")
 			}
-			bat = &batteryInverter{inverter{r}}
+			bat = &batteryInverter{inverter: inverter{mr: r}}
 		case devicePVInverter:
-			pvs = append(pvs, &inverter{r})
+			pvs = append(pvs, &inverter{mr: r})
 		default:
 			return nil, fmt.Errorf("unknown device type")
 		}
