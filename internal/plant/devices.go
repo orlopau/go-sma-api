@@ -78,7 +78,7 @@ func (p *inverter) ReadPower() (float32, error) {
 	}
 
 
-	p.lastPower = float32(math.Max(0, pow))
+	p.lastPower = float32(pow)
 	p.lastPowerTime = time.Now()
 	return p.lastPower, nil
 }
