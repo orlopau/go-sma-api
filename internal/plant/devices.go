@@ -5,7 +5,6 @@ import (
 	"github.com/orlopau/go-energy/pkg/meter"
 	"github.com/orlopau/go-energy/pkg/sunspec"
 	"github.com/pkg/errors"
-	"math"
 	"time"
 )
 
