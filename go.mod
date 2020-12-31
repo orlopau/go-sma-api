@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gosuri/uilive v0.0.4
 	github.com/olekukonko/tablewriter v0.0.4
-	github.com/orlopau/go-energy v0.0.0-20201221185713-bf1631ecbfde
+	github.com/orlopau/go-energy v0.0.0-20201231125629-d6714b3310bb
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.7.1
 	github.com/urfave/cli/v2 v2.3.0
