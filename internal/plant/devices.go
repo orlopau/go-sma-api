@@ -8,9 +8,16 @@ import (
 	"time"
 )
 
-var activePowerObis = meter.OBISIdentifier{
+var activePowerDrawObis = meter.OBISIdentifier{
 	Channel:  0,
 	MeasVal:  1,
+	MeasType: 4,
+	Tariff:   0,
+}
+
+var activePowerFeedObis = meter.OBISIdentifier{
+	Channel:  0,
+	MeasVal:  2,
 	MeasType: 4,
 	Tariff:   0,
 }
@@ -55,11 +62,17 @@ func (g *GridMeter) ReadGrid() (float32, error) {
 			return 0, err
 		}
 		if tg.SerialNo == g.SerialNumber {
-			v, ok := tg.Obis[activePowerObis]
+			powerDraw, ok := tg.Obis[activePowerDrawObis]
 			if !ok {
-				return 0, fmt.Errorf("no active power found in telegram")
+				return 0, fmt.Errorf("no active power draw found in telegram")
 			}
-			return float32(v) * wattsResolution, nil
+
+			powerFeed, ok := tg.Obis[activePowerFeedObis]
+			if !ok {
+				return 0, fmt.Errorf("no active power feed found in telegram")
+			}
+
+			return float32(powerDraw - powerFeed) * wattsResolution, nil
 		}
 	}
 }
