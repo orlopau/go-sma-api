@@ -72,7 +72,7 @@ func (g *GridMeter) ReadGrid() (float32, error) {
 				return 0, fmt.Errorf("no active power feed found in telegram")
 			}
 
-			return float32(powerDraw - powerFeed) * wattsResolution, nil
+			return (float32(powerDraw) - float32(powerFeed)) * wattsResolution, nil
 		}
 	}
 }
